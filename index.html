@@ -9,22 +9,25 @@
     margin: 0;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background: radial-gradient(circle at center, #ff9a9e, #fad0c4);
     overflow: hidden;
     font-family: 'Segoe UI', sans-serif;
     cursor: pointer;
+    text-align: center;
+    padding: 20px;
   }
 
   h1 {
     font-size: 3em;
     color: #fff;
-    text-align: center;
     text-shadow: 0 0 5px rgba(255,255,255,0.8),
                  0 0 10px rgba(255,0,150,0.6),
                  0 0 20px rgba(255,0,150,0.4);
     animation: float 3s ease-in-out infinite;
+    margin: 0.2em 0;
   }
 
   @keyframes float {
@@ -60,11 +63,33 @@
     100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
   }
 
+  /* Message styling */
+  .message {
+    font-size: 1.2em;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    margin-top: 30px;
+    line-height: 1.6;
+    animation: fadeIn 4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
 </style>
 </head>
 <body>
 
 <h1>Happy 1st Anniversary <span class="heart">❤️</span><br>Awais & Rabia</h1>
+
+<div class="message">
+  Motto ❤️, you are my everything.<br>
+  Every moment with you, Rabi 🥰, feels like magic ✨.<br>
+  From laughter to love, we’ve shared it all 💖.<br>
+  Awais 💑, forever grateful for you by my side.<br>
+  Happy Anniversary, my love! 💍✨
+</div>
 
 <script>
   // Function to create a single confetti
