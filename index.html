@@ -1,359 +1,286 @@
 <!doctype html>
-<html lang="en">
+<html lang="ur">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Happy 1st Anniversary — Rabia</title>
-
-  <!-- GSAP for smooth animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Awais & Rabia — Happy Anniversary</title>
   <style>
-    /* Reset */
-    * {box-sizing: border-box; margin:0; padding:0; font-family: "Segoe UI", Roboto, Arial, sans-serif;}
-    html,body {height:100%; background:#000;}
-    .stage {
+    /* Reset & base */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000;color:#fff}
+    /* full-screen centered vertical card like reel */
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background:linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.85));
+    }
+    .card{
+      width:min(460px, 96vw);
+      aspect-ratio: 9/16;
+      border-radius:18px;
+      overflow:hidden;
       position:relative;
-      width:100%;
-      height:100vh;
-      overflow:hidden;
-      perspective:1200px; /* 3D perspective */
-      background: radial-gradient(ellipse at center, rgba(0,0,0,0.25), rgba(0,0,0,0.65));
+      background:#111;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      display:flex;
+      align-items:flex-end;
     }
 
-    /* Background image with subtle parallax / 3D depth */
-    .bg {
+    /* Video fills card */
+    video, .poster {
       position:absolute;
       inset:0;
-      background-size:cover;
-      background-position:center;
-      filter: brightness(0.8) contrast(1.02) saturate(1.05) blur(0.6px);
-      transform: translateZ(-400px) scale(1.4); /* gives depth */
-      transition: transform 1s ease;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      -webkit-user-select:none;
+      user-select:none;
+      background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.35));
     }
 
-    /* soft overlay for golden warm tone */
-    .overlay {
-      position:absolute; inset:0; background: linear-gradient(180deg, rgba(40,22,8,0.35), rgba(12,8,6,0.6));
-      mix-blend-mode: multiply;
-    }
-
-    /* Text container in 3D space */
-    .text-wrap {
+    /* overlay gradient for readability */
+    .overlay{
       position:absolute;
-      top:6%;
-      left:50%;
-      transform: translateX(-50%) translateZ(0);
-      width:90%;
-      max-width:980px;
-      text-align:center;
+      inset:0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.0) 50%);
+      pointer-events:none;
+    }
+
+    /* right column icons */
+    .side {
+      position:absolute;
+      right:12px;
+      bottom:110px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:center;
       z-index:6;
-      pointer-events:none;
     }
-
-    .title {
-      font-size:4.2rem;
-      line-height:1.02;
+    .icon-btn{
+      width:56px;height:56px;border-radius:14px;
+      background:rgba(0,0,0,0.45);
+      display:flex;align-items:center;justify-content:center;
+      backdrop-filter: blur(6px);
+      cursor:pointer;
+      transition:transform .15s ease, background .15s;
       color:#fff;
-      text-shadow:
-        0 6px 20px rgba(0,0,0,0.6),
-        0 0 18px rgba(255,240,200,0.06);
-      letter-spacing:0.6px;
-      font-weight:700;
-      transform-origin:center;
-      margin-bottom:8px;
+    }
+    .icon-btn:active{transform:scale(.97)}
+    .icon-btn .count{font-size:12px;margin-top:6px;display:block;text-align:center;color:#fff;}
+    .like.hearted{background:linear-gradient(135deg,#ff3b30,#ff7a7a); box-shadow:0 5px 18px rgba(255,59,48,0.18)}
+    .rotate-disc{
+      width:44px;height:44px;border-radius:50%;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.06);
+      background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.12));
     }
 
-    .subtitle {
-      font-size:2.2rem;
-      color:#fff;
-      opacity:0.95;
-      margin-top:6px;
-      font-weight:600;
-      text-shadow: 0 8px 28px rgba(0,0,0,0.6);
-    }
-
-    .message {
-      font-size:1.4rem;
-      color:#fff;
-      max-width:840px;
-      margin:18px auto 0;
-      line-height:1.45;
-      text-shadow: 0 6px 24px rgba(0,0,0,0.6);
-      font-weight:500;
-    }
-
-    /* Bride & groom card (we'll use cropped image) */
-    .couple {
-      position:absolute;
-      left:50%;
-      transform: translate(-50%, 80%) scale(0.85);
-      bottom:8%;
+    /* bottom info area */
+    .bottom{
+      position:relative;
       z-index:5;
-      width:360px;
-      max-width:44vw;
-      transition: transform 0.6s ease;
-      opacity:0;
-      will-change:transform, opacity;
-      filter: drop-shadow(0 18px 35px rgba(0,0,0,0.55));
-      border-radius:12px;
-      overflow:hidden;
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    .couple img {
+      padding:18px;
+      display:flex;
+      gap:12px;
+      align-items:flex-end;
       width:100%;
-      height:auto;
-      display:block;
-      transform-origin:center bottom;
+      background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.28));
+    }
+    .meta{
+      flex:1;
+      align-self:flex-end;
+      color:#fff;
+      text-shadow:0 4px 18px rgba(0,0,0,0.6);
+    }
+    .user{
+      display:flex;gap:10px;align-items:center;margin-bottom:8px;
+    }
+    .avatar{
+      width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,0.06);
+      background:linear-gradient(180deg,#ff9a9e,#fad0c4);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
+    }
+    .username{font-weight:700;font-size:16px}
+    .subtitle{font-size:13px;opacity:0.9}
+
+    .caption{
+      font-size:15px;
+      line-height:1.3;
+      margin-top:6px;
+      max-width:100%;
+      opacity:0.98;
     }
 
-    /* fireworks canvas sitting above background */
-    canvas.fireworks {
-      position:absolute;
-      inset:0;
-      z-index:8;
-      pointer-events:none;
+    /* Play overlay */
+    .big-play {
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;
+      width:84px;height:84px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
+      border: 2px solid rgba(255,255,255,0.06);
+      cursor:pointer;transition:transform .12s;
+      display:none; /* hidden when autoplaying */
+    }
+    .big-play svg{width:44px;height:44px;opacity:0.95}
+
+    /* subtle bottom bar (date & greeting) */
+    .date-tag{
+      display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(0,0,0,0.3);font-weight:600;font-size:13px;margin-bottom:6px;
     }
 
     /* small responsive tweaks */
-    @media (max-width:720px){
-      .title { font-size:2.6rem; }
-      .subtitle { font-size:1.4rem; }
-      .message { font-size:1rem; padding:0 10px; }
-      .couple { width:62vw; bottom:6%; }
+    @media (max-width:480px){
+      .card{border-radius:12px}
+      .side{right:8px;bottom:92px}
+      .icon-btn{width:48px;height:48px;border-radius:12px}
     }
+
+    /* animations */
+    @keyframes spin {
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+    .spin { animation: spin 6s linear infinite; }
+    .pulse {
+      animation: pulse 600ms cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes pulse {
+      0%{ transform: scale(1) }
+      50%{ transform: scale(1.12) }
+      100%{ transform: scale(1) }
+    }
+
   </style>
 </head>
 <body>
-  <div class="stage" id="stage">
-    <!-- Background image: save your provided image as 'anniversary.png' in same folder -->
-    <div class="bg" id="bg"></div>
-    <div class="overlay"></div>
+  <div class="wrap">
+    <div class="card" id="reelCard" aria-live="polite">
+      <!-- Replace 'assets/video.mp4' with your video URL or path -->
+      <video id="video" loop playsinline muted poster="assets/poster.jpg">
+        <source src="assets/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
 
-    <div class="text-wrap" id="textWrap" aria-hidden="true">
-      <div class="title" id="title">Happy 1st Anniversary<br>Rabia <span id="heart">❤✨</span></div>
-      <div class="subtitle" id="subtitle">meri rabi meri motto, aaj humari mohabbat ka pehla sal mukammal hua.</div>
-      <div class="message" id="message">I love you forever.</div>
+      <div class="overlay"></div>
+
+      <!-- center big play (visible if video is paused) -->
+      <div class="big-play" id="bigPlay" title="Play / Pause">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.4"><path d="M5 3v18l15-9L5 3z"/></svg>
+      </div>
+
+      <!-- right-side icons -->
+      <div class="side" aria-hidden="false">
+        <div class="icon-btn like" id="likeBtn" title="Like">
+          <!-- heart -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 .0-7.78z"></path>
+          </svg>
+        </div>
+        <span style="font-size:13px;margin-top:6px;display:block;text-align:center;">1.2k</span>
+
+        <div class="icon-btn" title="Comments">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="icon-btn" title="Share">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v12"/></svg>
+        </div>
+
+        <div class="rotate-disc" title="Music">
+          <div style="width:28px;height:28px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 24 24" class="spin" style="width:24px;height:24px;opacity:0.95">
+              <circle cx="12" cy="12" r="10" stroke="white" stroke-width="0.8" fill="rgba(255,255,255,0.06)"></circle>
+              <circle cx="12" cy="12" r="3" fill="white"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- bottom meta -->
+      <div class="bottom">
+        <div class="meta">
+          <div class="user">
+            <div class="avatar">AR</div>
+            <div>
+              <div class="username">Awais & Rabia <span style="font-weight:600;font-size:12px;opacity:0.9">• Anniversary</span></div>
+              <div class="subtitle">28 November 2025 — Kal ❤️</div>
+            </div>
+          </div>
+
+          <div class="caption">
+            Happy Anniversary to my life partner <strong>Rabia</strong>.  
+            Tumhara saath, har pal ek nayi kahani hai. — <em>Awais</em>
+          </div>
+
+          <div style="margin-top:10px">
+            <span class="date-tag">Kal: 28 November 2025</span>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <!-- bride & groom image — use the provided image file; prefer a cropped version if available -->
-    <div class="couple" id="couple">
-      <!-- The script will try a few filenames; replace src if needed -->
-      <img id="coupleImg" src="anniversary.png" alt="Bride and Groom">
-    </div>
-
-    <!-- fireworks canvas -->
-    <canvas class="fireworks" id="fwCanvas"></canvas>
   </div>
 
-<script>
-/* ---------- Image loading & fallback ---------- */
-(function setupImages(){
-  const bgEl = document.getElementById('bg');
-  const coupleImg = document.getElementById('coupleImg');
+  <script>
+    (function(){
+      const video = document.getElementById('video');
+      const bigPlay = document.getElementById('bigPlay');
+      const likeBtn = document.getElementById('likeBtn');
 
-  // List of possible filenames to try (your provided file may contain emojis/spaces)
-  const candidates = [
-    'anniversary.png',
-    'anniversary.jpg',
-    'Happy 1st Anniversary Rabia 💖💍.png',          // original developer path attempt
-    encodeURIComponent('Happy 1st Anniversary Rabia 💖💍.png'),
-    './Happy 1st Anniversary Rabia 💖💍.png'
-  ];
+      // Try to autoplay; on mobile browsers autoplay might be blocked unless muted (we set muted)
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
 
-  function tryLoad(list, el, asBg=false){
-    if(!list.length) { if(asBg) el.style.backgroundColor='#222'; return; }
-    const name = list.shift();
-    const img = new Image();
-    img.onload = function(){
-      if(asBg){
-        el.style.backgroundImage = `url('${name}')`;
-      } else {
-        el.src = name;
+      // If video can play, hide bigPlay
+      video.addEventListener('playing', ()=> { bigPlay.style.display = 'none'; });
+      video.addEventListener('pause', ()=> { bigPlay.style.display = 'flex'; });
+
+      // Toggle play/pause on card click or big play
+      function togglePlay(){
+        if (video.paused) {
+          video.play().catch(()=>{ /* ignore autoplay errors */});
+        } else {
+          video.pause();
+        }
       }
-    };
-    img.onerror = function(){ tryLoad(list, el, asBg); };
-    img.src = name;
-  }
-
-  // Try load background and couple image (same source)
-  tryLoad(candidates.slice(), bgEl, true);
-  tryLoad(candidates.slice(), coupleImg, false);
-})();
-
-/* ---------- 3D-like micro parallax: move bg slightly based on mouse ---------- */
-(function parallaxBG(){
-  const bg = document.getElementById('bg');
-  const stage = document.getElementById('stage');
-
-  let rx=0, ry=0;
-  stage.addEventListener('mousemove', (e)=>{
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const nx = (e.clientX/w - 0.5)*2; // -1..1
-    const ny = (e.clientY/h - 0.5)*2;
-    rx = nx*6; ry = ny*4;
-    bg.style.transform = `translateZ(-400px) scale(1.45) translate(${rx}px, ${-ry}px)`;
-  });
-
-  stage.addEventListener('mouseleave', ()=> {
-    bg.style.transform = `translateZ(-400px) scale(1.4)`;
-  });
-})();
-
-/* ---------- GSAP timeline for staged animation ---------- */
-(function entranceTimeline(){
-  const tl = gsap.timeline();
-
-  // initial subtle pop
-  gsap.set('#title, #subtitle, #message, #couple', { transformOrigin: 'center center' });
-
-  tl.to('#textWrap', { duration: 0.6, autoAlpha:1 }, 0);
-
-  // Title: 3D pop & glow
-  tl.from('#title', { duration: 0.9, y:-40, scale:0.9, ease: "back.out(1.4)", opacity:0 }, 0.1);
-  // subtitle
-  tl.from('#subtitle', { duration:0.7, y:-18, opacity:0, ease:"power2.out" }, 0.55);
-  tl.from('#message', { duration:0.7, y:-12, opacity:0, ease:"power2.out" }, 0.75);
-
-  // brief pause then couple entrance (slide up + scale)
-  tl.to('#couple', { duration: 0.9, y:-40, opacity:1, transform: 'translate(-50%, 0%) scale(1)', ease: "expo.out" }, 1.5);
-
-  // small breathing loop on couple
-  tl.to('#couple img', { duration: 6, y:-6, repeat: -1, yoyo:true, ease:"sine.inOut" }, 2.4);
-
-  // pop the heart sparkle after entrance
-  tl.fromTo('#heart', { scale:0.6, opacity:0.2 }, { duration:0.8, scale:1.15, opacity:1, ease:"elastic.out(1,0.6)" }, 0.9);
-})();
-
-/* ---------- Fireworks particle system (canvas) ---------- */
-(function fireworks(){
-  const canvas = document.getElementById('fwCanvas');
-  const ctx = canvas.getContext('2d');
-  let W = canvas.width = innerWidth;
-  let H = canvas.height = innerHeight;
-
-  window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
-
-  const particles = [];
-  const rockets = [];
-
-  function rand(min,max){ return Math.random()*(max-min)+min; }
-
-  // Rocket -> when reaches peak it explodes into particles
-  function launchRandomRocket(){
-    const rocket = {
-      x: rand(W*0.15, W*0.85),
-      y: H + 10,
-      vx: rand(-1.2,1.2),
-      vy: rand(-12,-8),
-      size: rand(2,3),
-      hue: rand(0,360),
-      life: 0
-    };
-    rockets.push(rocket);
-  }
-
-  function explode(x,y,hue){
-    const count = Math.floor(rand(30,70));
-    for(let i=0;i<count;i++){
-      const angle = Math.random()*Math.PI*2;
-      const speed = Math.pow(Math.random(),0.5) * rand(1,8);
-      particles.push({
-        x:x, y:y,
-        vx: Math.cos(angle)*speed,
-        vy: Math.sin(angle)*speed,
-        life: rand(40,100),
-        age:0,
-        size: rand(1,3),
-        hue: (hue + rand(-40,40))|0
+      bigPlay.addEventListener('click', togglePlay);
+      // Toggle on tapping the whole card (but avoid interfering with side buttons)
+      document.getElementById('reelCard').addEventListener('click', (e)=>{
+        // if clicked on side icons, don't toggle
+        if (e.target.closest('.side') || e.target.closest('.icon-btn')) return;
+        togglePlay();
       });
-    }
-  }
 
-  // spawn rockets periodically
-  let spawnTimer = 0;
-  function update(){
-    requestAnimationFrame(update);
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(6,6,6,0.25)'; // trails
-    ctx.fillRect(0,0,W,H);
-    ctx.globalCompositeOperation = 'lighter';
+      // Like button animation & heart toggle
+      let liked = false;
+      likeBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        liked = !liked;
+        if (liked){
+          likeBtn.classList.add('hearted');
+          likeBtn.classList.add('pulse');
+          setTimeout(()=>likeBtn.classList.remove('pulse'), 700);
+        } else {
+          likeBtn.classList.remove('hearted');
+        }
+      });
 
-    // rockets
-    for(let i = rockets.length-1; i>=0; i--){
-      const r = rockets[i];
-      r.x += r.vx;
-      r.y += r.vy;
-      r.vy += 0.18; // gravity
-      r.life++;
-      // draw rocket (small)
-      ctx.beginPath();
-      const g = ctx.createRadialGradient(r.x,r.y,0,r.x,r.y,12);
-      g.addColorStop(0, `hsla(${r.hue},100%,65%,1)`);
-      g.addColorStop(0.6, `hsla(${r.hue},100%,55%,0.6)`);
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = g;
-      ctx.arc(r.x, r.y, r.size+1, 0, Math.PI*2);
-      ctx.fill();
+      // On load, try to autoplay
+      window.addEventListener('load', ()=> {
+        video.play().catch(()=> { bigPlay.style.display = 'flex'; });
+      });
 
-      if(r.vy >= -1.2 || r.life > 120){ // explode
-        explode(r.x, r.y, r.hue);
-        rockets.splice(i,1);
-      }
-    }
+      // Accessibility: space toggles play/pause
+      window.addEventListener('keydown', (e)=>{
+        if (e.code === 'Space') {
+          e.preventDefault();
+          togglePlay();
+        }
+      });
 
-    // particles
-    for(let i = particles.length-1; i>=0; i--){
-      const p = particles[i];
-      p.vy += 0.02; // slight gravity
-      p.vx *= 0.998;
-      p.vy *= 0.998;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.age++;
-      const lifeRatio = 1 - p.age / p.life;
-
-      // draw particle
-      ctx.beginPath();
-      ctx.fillStyle = `hsla(${p.hue}, 100%, 60%, ${Math.max(0, lifeRatio)})`;
-      ctx.arc(p.x, p.y, p.size*lifeRatio + 0.2, 0, Math.PI*2);
-      ctx.fill();
-
-      if(p.age >= p.life){
-        particles.splice(i,1);
-      }
-    }
-
-    // occasional sparks trailing at top
-    spawnTimer--;
-    if(spawnTimer <= 0){
-      launchRandomRocket();
-      spawnTimer = Math.floor(rand(18,42));
-    }
-  }
-
-  // start the loop
-  update();
-
-  // Optional: also trigger a fan of fireworks when couple finishes entrance
-  setTimeout(()=> burstAtCenter(), 2500);
-  function burstAtCenter(){
-    const x = innerWidth/2;
-    const y = innerHeight*0.12;
-    for(let i=0;i<6;i++){
-      setTimeout(()=> explode(x + rand(-80,80), y + rand(-20,20), rand(0,360)), i*200);
-    }
-  }
-
-  // User click/tap triggers mini burst
-  window.addEventListener('pointerdown', (e)=>{
-    explode(e.clientX, e.clientY - 80, Math.random()*360);
-  });
-
-})();
-
-</script>
+    })();
+  </script>
 </body>
 </html>
