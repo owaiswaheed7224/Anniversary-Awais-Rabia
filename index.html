@@ -1,286 +1,78 @@
-<!doctype html>
-<html lang="ur">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Awais & Rabia — Happy Anniversary</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy 1st Anniversary!</title>
   <style>
-    /* Reset & base */
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000;color:#fff}
-    /* full-screen centered vertical card like reel */
-    .wrap{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      background:linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.85));
-    }
-    .card{
-      width:min(460px, 96vw);
-      aspect-ratio: 9/16;
-      border-radius:18px;
-      overflow:hidden;
-      position:relative;
-      background:#111;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-      display:flex;
-      align-items:flex-end;
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
     }
 
-    /* Video fills card */
-    video, .poster {
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      -webkit-user-select:none;
-      user-select:none;
-      background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.35));
+    h1 {
+      font-size: 3em;
+      color: #fff;
+      text-transform: uppercase;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+      animation: float 3s ease-in-out infinite;
     }
 
-    /* overlay gradient for readability */
-    .overlay{
-      position:absolute;
-      inset:0;
-      background: linear-gradient(0deg, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.0) 50%);
-      pointer-events:none;
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px) rotate(-2deg); }
     }
 
-    /* right column icons */
-    .side {
-      position:absolute;
-      right:12px;
-      bottom:110px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:center;
-      z-index:6;
-    }
-    .icon-btn{
-      width:56px;height:56px;border-radius:14px;
-      background:rgba(0,0,0,0.45);
-      display:flex;align-items:center;justify-content:center;
-      backdrop-filter: blur(6px);
-      cursor:pointer;
-      transition:transform .15s ease, background .15s;
-      color:#fff;
-    }
-    .icon-btn:active{transform:scale(.97)}
-    .icon-btn .count{font-size:12px;margin-top:6px;display:block;text-align:center;color:#fff;}
-    .like.hearted{background:linear-gradient(135deg,#ff3b30,#ff7a7a); box-shadow:0 5px 18px rgba(255,59,48,0.18)}
-    .rotate-disc{
-      width:44px;height:44px;border-radius:50%;overflow:hidden;
-      display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.06);
-      background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.12));
+    .heart {
+      color: red;
+      animation: beat 1s infinite;
     }
 
-    /* bottom info area */
-    .bottom{
-      position:relative;
-      z-index:5;
-      padding:18px;
-      display:flex;
-      gap:12px;
-      align-items:flex-end;
-      width:100%;
-      background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.28));
-    }
-    .meta{
-      flex:1;
-      align-self:flex-end;
-      color:#fff;
-      text-shadow:0 4px 18px rgba(0,0,0,0.6);
-    }
-    .user{
-      display:flex;gap:10px;align-items:center;margin-bottom:8px;
-    }
-    .avatar{
-      width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,0.06);
-      background:linear-gradient(180deg,#ff9a9e,#fad0c4);
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
-    }
-    .username{font-weight:700;font-size:16px}
-    .subtitle{font-size:13px;opacity:0.9}
-
-    .caption{
-      font-size:15px;
-      line-height:1.3;
-      margin-top:6px;
-      max-width:100%;
-      opacity:0.98;
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
     }
 
-    /* Play overlay */
-    .big-play {
-      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;
-      width:84px;height:84px;border-radius:999px;
-      display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
-      border: 2px solid rgba(255,255,255,0.06);
-      cursor:pointer;transition:transform .12s;
-      display:none; /* hidden when autoplaying */
-    }
-    .big-play svg{width:44px;height:44px;opacity:0.95}
-
-    /* subtle bottom bar (date & greeting) */
-    .date-tag{
-      display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(0,0,0,0.3);font-weight:600;font-size:13px;margin-bottom:6px;
+    /* Confetti */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #fff;
+      opacity: 0.8;
+      animation: fall 5s linear infinite;
     }
 
-    /* small responsive tweaks */
-    @media (max-width:480px){
-      .card{border-radius:12px}
-      .side{right:8px;bottom:92px}
-      .icon-btn{width:48px;height:48px;border-radius:12px}
+    @keyframes fall {
+      0% { transform: translateY(-10px) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
     }
-
-    /* animations */
-    @keyframes spin {
-      from{transform:rotate(0deg)}
-      to{transform:rotate(360deg)}
-    }
-    .spin { animation: spin 6s linear infinite; }
-    .pulse {
-      animation: pulse 600ms cubic-bezier(.2,.8,.2,1);
-    }
-    @keyframes pulse {
-      0%{ transform: scale(1) }
-      50%{ transform: scale(1.12) }
-      100%{ transform: scale(1) }
-    }
-
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" id="reelCard" aria-live="polite">
-      <!-- Replace 'assets/video.mp4' with your video URL or path -->
-      <video id="video" loop playsinline muted poster="assets/poster.jpg">
-        <source src="assets/video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
 
-      <div class="overlay"></div>
-
-      <!-- center big play (visible if video is paused) -->
-      <div class="big-play" id="bigPlay" title="Play / Pause">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.4"><path d="M5 3v18l15-9L5 3z"/></svg>
-      </div>
-
-      <!-- right-side icons -->
-      <div class="side" aria-hidden="false">
-        <div class="icon-btn like" id="likeBtn" title="Like">
-          <!-- heart -->
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 .0-7.78z"></path>
-          </svg>
-        </div>
-        <span style="font-size:13px;margin-top:6px;display:block;text-align:center;">1.2k</span>
-
-        <div class="icon-btn" title="Comments">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div class="icon-btn" title="Share">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v12"/></svg>
-        </div>
-
-        <div class="rotate-disc" title="Music">
-          <div style="width:28px;height:28px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-            <svg viewBox="0 0 24 24" class="spin" style="width:24px;height:24px;opacity:0.95">
-              <circle cx="12" cy="12" r="10" stroke="white" stroke-width="0.8" fill="rgba(255,255,255,0.06)"></circle>
-              <circle cx="12" cy="12" r="3" fill="white"></circle>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- bottom meta -->
-      <div class="bottom">
-        <div class="meta">
-          <div class="user">
-            <div class="avatar">AR</div>
-            <div>
-              <div class="username">Awais & Rabia <span style="font-weight:600;font-size:12px;opacity:0.9">• Anniversary</span></div>
-              <div class="subtitle">28 November 2025 — Kal ❤️</div>
-            </div>
-          </div>
-
-          <div class="caption">
-            Happy Anniversary to my life partner <strong>Rabia</strong>.  
-            Tumhara saath, har pal ek nayi kahani hai. — <em>Awais</em>
-          </div>
-
-          <div style="margin-top:10px">
-            <span class="date-tag">Kal: 28 November 2025</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+  <h1>Happy 1st Anniversary <span class="heart">❤️</span><br>Awais & Rabia</h1>
 
   <script>
-    (function(){
-      const video = document.getElementById('video');
-      const bigPlay = document.getElementById('bigPlay');
-      const likeBtn = document.getElementById('likeBtn');
-
-      // Try to autoplay; on mobile browsers autoplay might be blocked unless muted (we set muted)
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-
-      // If video can play, hide bigPlay
-      video.addEventListener('playing', ()=> { bigPlay.style.display = 'none'; });
-      video.addEventListener('pause', ()=> { bigPlay.style.display = 'flex'; });
-
-      // Toggle play/pause on card click or big play
-      function togglePlay(){
-        if (video.paused) {
-          video.play().catch(()=>{ /* ignore autoplay errors */});
-        } else {
-          video.pause();
-        }
-      }
-      bigPlay.addEventListener('click', togglePlay);
-      // Toggle on tapping the whole card (but avoid interfering with side buttons)
-      document.getElementById('reelCard').addEventListener('click', (e)=>{
-        // if clicked on side icons, don't toggle
-        if (e.target.closest('.side') || e.target.closest('.icon-btn')) return;
-        togglePlay();
-      });
-
-      // Like button animation & heart toggle
-      let liked = false;
-      likeBtn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        liked = !liked;
-        if (liked){
-          likeBtn.classList.add('hearted');
-          likeBtn.classList.add('pulse');
-          setTimeout(()=>likeBtn.classList.remove('pulse'), 700);
-        } else {
-          likeBtn.classList.remove('hearted');
-        }
-      });
-
-      // On load, try to autoplay
-      window.addEventListener('load', ()=> {
-        video.play().catch(()=> { bigPlay.style.display = 'flex'; });
-      });
-
-      // Accessibility: space toggles play/pause
-      window.addEventListener('keydown', (e)=>{
-        if (e.code === 'Space') {
-          e.preventDefault();
-          togglePlay();
-        }
-      });
-
-    })();
+    // Generate confetti
+    for(let i=0; i<100; i++){
+      let confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 75%)`;
+      confetti.style.animationDuration = 2 + Math.random() * 3 + 's';
+      confetti.style.width = 5 + Math.random() * 10 + 'px';
+      confetti.style.height = confetti.style.width;
+      document.body.appendChild(confetti);
+    }
   </script>
+
 </body>
 </html>
