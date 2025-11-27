@@ -1,78 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy 1st Anniversary!</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 1st Anniversary!</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #ff9a9e, #fad0c4);
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+    cursor: pointer;
+  }
 
-    h1 {
-      font-size: 3em;
-      color: #fff;
-      text-transform: uppercase;
-      text-align: center;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-      animation: float 3s ease-in-out infinite;
-    }
+  h1 {
+    font-size: 3em;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(255,255,255,0.8),
+                 0 0 10px rgba(255,0,150,0.6),
+                 0 0 20px rgba(255,0,150,0.4);
+    animation: float 3s ease-in-out infinite;
+  }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px) rotate(-2deg); }
-    }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-25px) rotate(-2deg); }
+  }
 
-    .heart {
-      color: red;
-      animation: beat 1s infinite;
-    }
+  .heart {
+    color: #ff0066;
+    display: inline-block;
+    animation: beat 1s infinite;
+    font-size: 1.2em;
+  }
 
-    @keyframes beat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-    }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+  }
 
-    /* Confetti */
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: #fff;
-      opacity: 0.8;
-      animation: fall 5s linear infinite;
-    }
+  /* Confetti */
+  .confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    opacity: 0.9;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: fall linear infinite;
+  }
 
-    @keyframes fall {
-      0% { transform: translateY(-10px) rotate(0deg); }
-      100% { transform: translateY(100vh) rotate(360deg); }
-    }
-  </style>
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity:1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
+  }
+
+</style>
 </head>
 <body>
 
-  <h1>Happy 1st Anniversary <span class="heart">❤️</span><br>Awais & Rabia</h1>
+<h1>Happy 1st Anniversary <span class="heart">❤️</span><br>Awais & Rabia</h1>
 
-  <script>
-    // Generate confetti
-    for(let i=0; i<100; i++){
-      let confetti = document.createElement('div');
-      confetti.classList.add('confetti');
-      confetti.style.left = Math.random() * window.innerWidth + 'px';
-      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 75%)`;
-      confetti.style.animationDuration = 2 + Math.random() * 3 + 's';
-      confetti.style.width = 5 + Math.random() * 10 + 'px';
-      confetti.style.height = confetti.style.width;
-      document.body.appendChild(confetti);
+<script>
+  // Function to create a single confetti
+  function createConfetti(x, y){
+    let confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.left = x + 'px';
+    confetti.style.top = y + 'px';
+    confetti.style.width = 5 + Math.random()*12 + 'px';
+    confetti.style.height = confetti.style.width;
+    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 75%)`;
+    confetti.style.animationDuration = 2 + Math.random()*3 + 's';
+    document.body.appendChild(confetti);
+
+    // Remove confetti after animation
+    setTimeout(()=>{ confetti.remove(); }, 5000);
+  }
+
+  // Generate continuous falling confetti
+  setInterval(()=>{
+    createConfetti(Math.random()*window.innerWidth, -10);
+  }, 150);
+
+  // Generate extra confetti on click
+  document.body.addEventListener('click', (e)=>{
+    for(let i=0; i<30; i++){
+      createConfetti(e.clientX, e.clientY);
     }
-  </script>
+  });
+</script>
 
 </body>
 </html>
