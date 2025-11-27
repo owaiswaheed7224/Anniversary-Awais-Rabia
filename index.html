@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anniversary — 3D Message (Premium)</title>
+  <style>
+    html,body{height:100%;margin:0;background:#050003;font-family:Inter, Arial, sans-serif;color:#fff}
+    #overlay{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none}
+    #ui{position:absolute;left:20px;top:20px;z-index:10;pointer-events:auto}
+    .btn{background:linear-gradient(180deg, #ffd86b, #ff9f1c);border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    #messageBox{position:absolute;left:50%;top:12%;transform:translateX(-50%);width:78%;text-align:center;pointer-events:auto}
+    #messageBox .title{font-size:2rem;letter-spacing:1px;text-shadow:0 6px 18px rgba(0,0,0,0.6)}
+    #messageBox .sub{margin-top:10px;font-size:1.05rem;opacity:0.95}
+    #playAudio{margin-left:10px}
+    #credit{position:absolute;right:12px;bottom:12px;opacity:0.6;font-size:12px}
+    canvas{display:block}
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <button id="startBtn" class="btn">Play Animation</button>
+    <button id="replayBtn" class="btn" style="display:none;margin-left:8px">Replay</button>
+    <button id="muteBtn" class="btn" style="margin-left:8px">Mute</button>
+  </div>
+
+  <div id="messageBox">
+    <div class="title">Happy 1st Anniversary, Rabia ❤️💍✨</div>
+    <div class="sub">Meri Rabi… meri Motto… Aaj humari mohabbat ka pehla saal mukammal hua. I love you forever.</div>
+  </div>
+
+  <div id="overlay"></div>
+  <div id="credit">Made with ❤️ — Anniversary 3D</div>
+
+  <!-- Three.js core -->
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <!-- extras (legacy loaders/geometries) -->
+  <script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
+
+  <audio id="bgAudio" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_8c9b0f0a56.mp3?filename=relaxing-piano-ambient-111475.mp3" type="audio/mpeg">
+    <!-- Replace the src with your chosen track if you like -->
+  </audio>
+
+  <script>
+    // ----- Basic scene -----
+    let scene, camera, renderer, clock;
+    let particleSystem, hearts = [], textMesh;
+    const WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
+
+    function init(){
+      scene = new THREE.Scene();
+      clock = new THREE.Clock();
+
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
+      camera.position.set(0, 20, 120);
+
+      renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      document.body.appendChild(renderer.domElement);
+
+      // Lights
+      const amb = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(amb);
+      const pLight = new THREE.PointLight(0xffcc88, 1.2, 400);
+      pLight.position.set(50,50,50);
+      scene.add(pLight);
+
+      // Golden particle field (using Points)
+      const particlesCount = 2000;
+      const positions = new Float32Array(particlesCount * 3);
+      const sizes = new Float32Array(particlesCount);
+      for(let i=0;i<particlesCount;i++){
+        const i3 = i*3;
+        positions[i3] = (Math.random()-0.5) * 600;
+        positions[i3+1] = (Math.random()-0.5) * 300;
+        positions[i3+2] = (Math.random()-0.5) * 600;
+        sizes[i] = Math.random()*4 + 1;
+      }
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      geom.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+
+      const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/spark1.png');
+      const material = new THREE.PointsMaterial({map:sprite, size:6, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false});
+      material.color = new THREE.Color(0xFFD27A);
+      particleSystem = new THREE.Points(geom, material);
+      scene.add(particleSystem);
+
+      // 3D floating hearts
+      const heartShape = new THREE.Shape();
+      heartShape.moveTo(0,0);
+      heartShape.bezierCurveTo(0,8, -10,12, -10,20);
+      heartShape.bezierCurveTo(-10,30, 10,30, 10,20);
+      heartShape.bezierCurveTo(10,12, 0,8, 0,0);
+
+      const extrudeSettings = { depth: 4, bevelEnabled:true, bevelSegments:2, steps:2, bevelSize:1, bevelThickness:1 };
+      const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+      const heartMat = new THREE.MeshStandardMaterial({color:0xff5577, metalness:0.6, roughness:0.2, emissive:0x441111});
+
+      for(let i=0;i<12;i++){
+        const m = new THREE.Mesh(heartGeo, heartMat.clone());
+        m.scale.setScalar(0.5 + Math.random()*0.9);
+        m.position.set((Math.random()-0.5)*80, -10 + Math.random()*80, (Math.random()-0.5)*120);
+        m.rotation.set(Math.random(), Math.random(), Math.random());
+        scene.add(m);
+        hearts.push({mesh:m, speed:0.5 + Math.random()*1.5});
+      }
+
+      // 3D Text (load font)
+      const loader = new THREE.FontLoader();
+      loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font){
+        // NOTE: Use a template literal for multi-line text to avoid syntax errors.
+        const txt = `Happy 1st Anniversary
+Rabia ❤️`;
+        const txtGeo = new THREE.TextGeometry(txt, {
+          font: font,
+          size: 6,
+          height: 2,
+          curveSegments: 12,
+          bevelEnabled: true,
+          bevelThickness: 0.6,
+          bevelSize: 0.5,
+          bevelOffset: 0,
+          bevelSegments: 5
+        });
+        txtGeo.computeBoundingBox();
+        const centerOffset = -0.5 * ( txtGeo.boundingBox.max.x - txtGeo.boundingBox.min.x );
+        const mat = new THREE.MeshStandardMaterial({color:0xffe3b3, metalness:0.8, roughness:0.25});
+        textMesh = new THREE.Mesh(txtGeo, mat);
+        textMesh.position.set(centerOffset, 10, 0);
+        textMesh.rotation.x = -0.08;
+        scene.add(textMesh);
+      });
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function onWindowResize(){
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Animation controls
+    let animPlaying = false;
+    function playSequence(){
+      if(animPlaying) return;
+      animPlaying = true;
+      document.getElementById('replayBtn').style.display = 'inline-block';
+      document.getElementById('startBtn').style.display = 'none';
+      const audio = document.getElementById('bgAudio');
+      audio.play().catch(()=>{});
+      // camera fly-in
+      const duration = 4.0; // seconds
+      const start = {z:260,y:40};
+      const end = {z:110,y:20};
+      let t0 = performance.now();
+      function fly(){
+        let t = (performance.now() - t0)/1000;
+        let k = Math.min(1, t/duration);
+        const ease = k*(2-k);
+        camera.position.z = start.z + (end.z - start.z)*ease;
+        camera.position.y = start.y + (end.y - start.y)*ease;
+        camera.lookAt(0,10,0);
+        if(k<1) requestAnimationFrame(fly);
+      }
+      fly();
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+
+      if(particleSystem){
+        particleSystem.rotation.y += 0.02 * dt * 60;
+      }
+      hearts.forEach((h,idx)=>{
+        h.mesh.position.y += 0.02 * h.speed * 60 * dt;
+        h.mesh.rotation.x += 0.01*(idx%3+1);
+        if(h.mesh.position.y > 120) h.mesh.position.y = -20 - Math.random()*40;
+      });
+
+      if(textMesh){
+        textMesh.rotation.y += 0.005;
+        textMesh.position.y = 8 + Math.sin(clock.getElapsedTime()*0.8)*1.2;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // UI hooks
+    document.addEventListener('DOMContentLoaded', ()=>{
+      init();
+      animate();
+
+      const startBtn = document.getElementById('startBtn');
+      const replayBtn = document.getElementById('replayBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const audio = document.getElementById('bgAudio');
+
+      startBtn.addEventListener('click', ()=>{ playSequence(); });
+      replayBtn.addEventListener('click', ()=>{ // reset some state and replay
+        camera.position.set(0,40,260);
+        animPlaying = false;
+        playSequence();
+      });
+      muteBtn.addEventListener('click', ()=>{ audio.muted = !audio.muted; muteBtn.textContent = audio.muted? 'Unmute' : 'Mute'; });
+
+      // initial camera far away for cinematic entry
+      camera.position.set(0,40,260);
+    });
+  </script>
+</body>
+</html>
